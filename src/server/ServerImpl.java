@@ -43,7 +43,7 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
         assert client != null;
         assert name   != null;
         
-        ClientProxy clientProxy = new ClientProxy( client, name, this );
+        ClientProxy clientProxy = new ClientProxy( client, name );
         clientProxy.start();
         clientProxies.put( client, clientProxy );
         update( new Message( name, "Signed on.") );
@@ -69,12 +69,8 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
     public List<String> list()
     {
         List<String> clientNameList = new LinkedList<>();
-
-        Collection<ClientProxy> clientProxyCollection = clientProxies.values();
-        for ( ClientProxy clientProxy : clientProxyCollection )
-        {
-            clientNameList.add( clientProxy.getClientName() );
-        }
+        clientProxies.values()
+                     .forEach( clientProxy -> clientNameList.add( clientProxy.getClientName() ) );
         return clientNameList;
     }
 
@@ -82,15 +78,9 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
     synchronized public void update( Message message )
     {
         assert message != null;
-
-        for ( Client clientProxy : clientProxies.values() )
-        {
-            try
-            {
-                clientProxy.update( message );
-            }
-            catch ( RemoteException ignore ) {} // handled by clientProxy
-        }
+        clientProxies.values()
+                     .stream()
+                     .forEach(clientProxy -> clientProxy.update( message ) );
     }
 
     /**
@@ -106,7 +96,6 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
     {
         private final Client client;
         private final String clientName;
-        private final Server server;
         private final BlockingQueue<Message> q;
 
         /**
@@ -115,16 +104,14 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
          * @param clientName cached value of client.getName()
          * @param server the chat server that has a reference to this
          */
-        public ClientProxy( Client client, String clientName, Server server )
+        public ClientProxy( Client client, String clientName )
         {
             this.q = new LinkedBlockingQueue<>();
             assert client != null;
             assert clientName != null;
-            assert server != null;
 
             this.client = client;
             this.clientName = clientName;
-            this.server = server;
         }
 
         @Override
@@ -148,13 +135,9 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
                     client.update( q.take() );
                 }
                 catch (RemoteException exception)
-                {
-                    try
-                    {
-                        server.logout( this );
-                        return; // let this thread die
-                    }
-                    catch ( RemoteException ignore ) {} // local method
+                {                    
+                    ServerImpl.this.logout( this );
+                    return;
                 }
                 catch ( InterruptedException ignore ) {}
             }
