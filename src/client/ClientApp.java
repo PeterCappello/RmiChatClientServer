@@ -108,17 +108,13 @@ public final class ClientApp extends UnicastRemoteObject implements Client
         //  contoller TEMPLATE CODE for each action
         //  _______________________________________
 
-        // connect/disconnect
         connectButton.addActionListener(this::connectButtonActionPerformed);
 
-        // login/logout
         loginButton.addActionListener(this::loginButtonActionPerformed);
 
         clearButton.addActionListener(this::clearButtonActionPerformed);
 
-
         listButton.addActionListener(this::listButtonActionPerformed);
-
         
         sendButton.addActionListener(this::sendButtonActionPerformed);
 
