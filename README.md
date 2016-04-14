@@ -1,0 +1,1 @@
+This project's raison d'etre is to illustrate the use of the _Remote Proxy_ design pattern.  It however illustrates a variety of other things, and is a framework for client/server-based collaborative activities, where sharing strings (posts) is the simplest concrete case.
