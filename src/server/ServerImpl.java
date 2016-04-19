@@ -38,7 +38,7 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
     }
 
     @Override
-    public void login( Client client, String name )
+    synchronized public void login( Client client, String name )
     {
         assert client != null;
         assert name   != null;
@@ -52,7 +52,7 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
     }
 
     @Override
-    public void logout( Client client )
+    synchronized public void logout( Client client )
     {
         assert client != null;
 
@@ -66,7 +66,7 @@ public final class ServerImpl extends UnicastRemoteObject implements Server
     }
 
     @Override
-    public List<String> list()
+    synchronized public List<String> list()
     {
         List<String> clientNameList = new LinkedList<>();
         clientProxies.values()
