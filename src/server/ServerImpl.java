@@ -9,6 +9,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
+ * Possible enhancements: 
+ * 1. client.update sends all messages in queue.
+ * 2. server.update puts message on dispatcher's queue, 
+ *    making server.update O(1) time in number of clients.
  *
  * @author Peter Cappello
  */
